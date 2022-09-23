@@ -1,4 +1,10 @@
---on veut faire quicksort avec Haskell
+{-
+Author: ScierKnave (Dereck Piche)
+Language: Haskell
+Description:
+This is an implementation of integer quickSort 
+that works only on lists without doubles
+-}
 quickSort :: [Int] -> [Int]
 quickSort list =
     if length list <= 1

@@ -1,5 +1,12 @@
+{-
+Author: ScierKnave (Dereck Piche)
+Language: Haskell
+Description:
+This is a ridiculous implementation of quickSort 
+that I made purely to confuse myself
+-}
 
---on veut faire quicksort avec Haskell
+
 quickSort :: [Int] -> [Int]
 quickSort list =
     if length list <= 1

@@ -28,17 +28,11 @@ void merge(int* list1, int len1, int* list2, int len2){
         if (tempL1[i] <= tempL2[j]) {
             list1[k] = tempL1[i]; i++;
         }
-        else {
-            list1[k] = tempL2[j]; j++;
-        }
+        else { list1[k] = tempL2[j]; j++; }
         k++;
     }
-    while(i < len1) {
-        list1[k] = tempL1[i]; i++; k++;
-    }
-    while(j < len2) {
-        list1[k] = tempL2[j]; j++; k++;       
-    }
+    while(i < len1) { list1[k] = tempL1[i]; i++; k++; }
+    while(j < len2) { list1[k] = tempL2[j]; j++; k++; }
     free(tempL1); free(tempL2); //free temp. list copies
 }
 

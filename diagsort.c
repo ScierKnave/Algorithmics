@@ -77,7 +77,7 @@ void merge(int* list1, int len1, int* list2, int len2){
     }
     while(i < len1) { list1[k] = tempL1[i]; i++; k++; }
     while(j < len2) { list1[k] = tempL2[j]; j++; k++; }
-    free(tempL1); free(tempL2); //free temp. list copies
+    //free(tempL1); free(tempL2); //free temp. list copies
 }
 
 void mergeSort(int *list, int length){
@@ -148,7 +148,7 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
             int length = minimum(m-d, n);
             mergeSort(list, length);
             setDiag(rMatrix, d, 0, m, n, list);
-            free(list);
+            //free(list);
         }
         //if diag starts in first line AND not in first column
         else {
@@ -156,7 +156,7 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
             int length = minimum(m,n-(d-m)-1);
             mergeSort(list, length);
             setDiag(rMatrix, 0, d-m+1, m, n, list);
-            free(list);
+            //free(list);
         }
     }
 

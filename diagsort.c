@@ -32,11 +32,10 @@ int minimum(int a, int b){
     return b;
 }
 
-//create a m * n matrix
+//allocate memory for a m * n matrix and return it's pointer
 int** matrix(int m, int n){
     int **mat = (int **) malloc(m * sizeof(int*));
-    for (int i = 0; i < m; i++)
-    {
+    for (int i = 0; i < m; i++){
         mat[i] = (int*) malloc(n * sizeof(int));
     }
     return mat;
@@ -77,7 +76,7 @@ void merge(int* list1, int len1, int* list2, int len2){
     }
     while(i < len1) { list1[k] = tempL1[i]; i++; k++; }
     while(j < len2) { list1[k] = tempL2[j]; j++; k++; }
-    //free(tempL1); free(tempL2); //free temp. list copies
+    free(tempL1); free(tempL2); //free temp. list copies
 }
 
 void mergeSort(int *list, int length){
@@ -98,7 +97,7 @@ void mergeSort(int *list, int length){
 
 /*-----------------------------------------Diagonal Sort---------------------------------------- */
 
-//turns diag of a matrix into a simple list
+//turns diagonal of a matrix into a malloced list and returns pointer of said list
 int* diagToList(int** mat, int i, int j, int m, int n){
     //find length of list
     int length = minimum(m-i, n-j); 
@@ -112,7 +111,7 @@ int* diagToList(int** mat, int i, int j, int m, int n){
     return list;
 }
 
-//takes list and copies it into diag of matrix 
+//takes list and copies it into diagonal of matrix 
 void setDiag(int** mat, int i, int j, int m, int n, int* list){
     int k = 0;
     while (i < m & j < n) {
@@ -121,6 +120,17 @@ void setDiag(int** mat, int i, int j, int m, int n, int* list){
     }
 }
 
+//sorts the diagonal starting i and j
+void dSort(int** iMat, int** rMat, int i, int j, int m, int n)
+{
+    int* list = diagToList(iMat, i, j, m, n);
+    int length = minimum(m-i, n-j); 
+    mergeSort(list, length);
+    setDiag(rMat, i, j, m, n, list);
+    free(list);
+}
+
+//create a copy of mat were all the elements on it's diagonal are sorted
 int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int** returnColumnSizes){
 
     //rename variables
@@ -131,36 +141,24 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
     //same size for every column
     returnSize = &matSize;
     int *cSizes= (int *)malloc(m);
-    for (int i = 0; i < m; i++){
-        cSizes[i] = n;
-    }
+    for (int i = 0; i < m; i++){ cSizes[i] = n;}
     *returnColumnSizes = cSizes;
     
 
     //create return matrix
-    int** rMatrix;
-    rMatrix = matrix(m, n);
-    //core of the function
+    int** rMat = matrix(m,n);
+    //sort all the diagonals
     for (int d = 0; d < m + n -1; d++){
         //if diag starts in first column
         if (d < m){
-            int* list = diagToList(mat, d, 0, m, n);
-            int length = minimum(m-d, n);
-            mergeSort(list, length);
-            setDiag(rMatrix, d, 0, m, n, list);
-            //free(list);
+            dSort(mat, rMat, d, 0, m, n);
         }
         //if diag starts in first line AND not in first column
         else {
-            int* list = diagToList(mat, 0, d-m+1, m, n);
-            int length = minimum(m,n-(d-m)-1);
-            mergeSort(list, length);
-            setDiag(rMatrix, 0, d-m+1, m, n, list);
-            //free(list);
+            dSort(mat, rMat, 0, d-m+1, m, n);
         }
     }
-
-    return rMatrix;
+    return rMat;
 }
 
 /*-----------------------------------------Main---------------------------------------- */

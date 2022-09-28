@@ -17,15 +17,6 @@ void copyLists(int* p1, int* p2, int length){
     }
 }
 
-//print a list
-void printList(int* list, int length){
-    for (int i = 0; i < length; i++) {
-        printf("%d ", list[i]);
-    }
-    printf("\n");
-}
-
-
 //return minimum of two integers
 int minimum(int a, int b){
     if (a < b) { return a; }
@@ -41,13 +32,6 @@ int** matrix(int m, int n){
     return mat;
 }
 
-void setMatrixZeros(int** mat, int m, int n){
-    for (int i = 0; i < m; i++){ 
-        for (int j = 0; j < n; j++) {
-            mat[i][j] = 1;
-        }
-    }
-}
 
 void printMatrix(int** mat, int m, int n){
     for (int i = 0; i < m; i++){
@@ -60,13 +44,15 @@ void printMatrix(int** mat, int m, int n){
 
 /*-----------------------------------------MergeSort---------------------------------------- */
 
-//function sorts two ordered lists
+//function merges two ordered lists
 void merge(int* list1, int len1, int* list2, int len2){
     int i, j, k, temp; i = j = k = temp = 0;
     //create temporary copies of list1 and list2
     int *tempL1; int *tempL2;
-    tempL1 = (int *) malloc(len1); tempL2 = (int *) malloc(len2);
-    copyLists(list1, tempL1, len1); copyLists(list2, tempL2, len2);
+    tempL1 = (int*) malloc(sizeof(int)*len1); 
+    tempL2 = (int*) malloc(sizeof(int)*len2);
+    copyLists(list1, tempL1, len1); 
+    copyLists(list2, tempL2, len2);
     while(i < len1 & j < len2){
         if (tempL1[i] <= tempL2[j]) {
             list1[k] = tempL1[i]; i++;
@@ -102,7 +88,7 @@ int* diagToList(int** mat, int i, int j, int m, int n){
     //find length of list
     int length = minimum(m-i, n-j); 
     //create list
-    int* list = (int*)malloc(length); //allocate memory for list
+    int* list = (int*)malloc(sizeof(int)*length); //allocate memory for list
     int k = 0;
     while (i < m & j < n) {
         list[k] = mat[i][j];
@@ -138,9 +124,9 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
     int n =  matColSize[0]; //number of columns
     //set sizes of returned matrix
     *returnSize = m;
-    int *cSizes= (int *)malloc(m);
-    for (int i = 0; i < m; i++){ cSizes[i] = n;}
-    *returnColumnSizes = cSizes;
+    *returnColumnSizes = malloc(sizeof(int)*m);
+    for (int i = 0; i < m; i++) (*returnColumnSizes)[i] = n;
+    
     //sort all the diagonals
     for (int d = 0; d < m + n -1; d++){
         //if diag starts in first column
@@ -170,8 +156,6 @@ int main(){
     int rSize;
     int* returnSize = &rSize; int** returnColumnSizes;
     int** sortedMat = diagonalSort(mat, matSize, matColSize, returnSize, returnColumnSizes);
-    printMatrix(mat, 2, 3);
-    printList(*returnColumnSizes, 2);
-    printf("%d", *returnSize);
+    printMatrix(mat, *returnSize, (*returnColumnSizes)[0]);
     return 0;
 }

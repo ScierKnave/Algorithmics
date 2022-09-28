@@ -7,15 +7,9 @@ Author: ScierKnave
 Language: C
 */
 
-
-
 /*-----------------------------------------Utilities---------------------------------------- */
-//function copies the contents of p1 into p2
-void copyLists(int* p1, int* p2, int length){
-    for (int i = 0; i < length; i++){
-        p2[i] = p1[i];
-    }
-}
+
+
 
 //return minimum of two integers
 int minimum(int a, int b){
@@ -23,7 +17,6 @@ int minimum(int a, int b){
     return b;
 }
 
-//allocate memory for a m * n matrix and return it's pointer
 int** matrix(int m, int n){
     int **mat = (int **) malloc(m * sizeof(int*));
     for (int i = 0; i < m; i++){
@@ -31,7 +24,6 @@ int** matrix(int m, int n){
     }
     return mat;
 }
-
 
 void printMatrix(int** mat, int m, int n){
     for (int i = 0; i < m; i++){
@@ -42,79 +34,42 @@ void printMatrix(int** mat, int m, int n){
     }
 }
 
-/*-----------------------------------------MergeSort---------------------------------------- */
-
-//function merges two ordered lists
-void merge(int* list1, int len1, int* list2, int len2){
-    int i, j, k, temp; i = j = k = temp = 0;
-    //create temporary copies of list1 and list2
-    int *tempL1; int *tempL2;
-    tempL1 = (int*) malloc(sizeof(int)*len1); 
-    tempL2 = (int*) malloc(sizeof(int)*len2);
-    copyLists(list1, tempL1, len1); 
-    copyLists(list2, tempL2, len2);
-    while(i < len1 & j < len2){
-        if (tempL1[i] <= tempL2[j]) {
-            list1[k] = tempL1[i]; i++;
-        }
-        else { list1[k] = tempL2[j]; j++; }
-        k++;
-    }
-    while(i < len1) { list1[k] = tempL1[i]; i++; k++; }
-    while(j < len2) { list1[k] = tempL2[j]; j++; k++; }
-    free(tempL1); free(tempL2); //free temp. list copies
-}
-
-void mergeSort(int *list, int length){
-    if (length >= 2) {
-        int halfLen, rest, len1, len2; //declare variables
-        halfLen = length / 2; rest = length % 2;
-        len1 = halfLen + rest; len2 = length - len1;
-        int* list2 = list + len1;
-        //sort left and right lists recursively
-        mergeSort(list, len1); mergeSort(list2, len2);
-        //merge left and right lists
-        merge(list, len1, list2, len2); 
-    }
-}
-
-
-
-
 /*-----------------------------------------Diagonal Sort---------------------------------------- */
 
-//turns diagonal of a matrix into a malloced list and returns pointer of said list
-int* diagToList(int** mat, int i, int j, int m, int n){
-    //find length of list
-    int length = minimum(m-i, n-j); 
-    //create list
-    int* list = (int*)malloc(sizeof(int)*length); //allocate memory for list
-    int k = 0;
-    while (i < m & j < n) {
-        list[k] = mat[i][j];
-        k++; i++, j++;
-    }
-    return list;
+
+
+void Switch(int** mat, int i, int j, int i2, int j2){
+    int temp = mat[i][j];
+    mat[i][j] = mat[i2][j2];
+    mat[i2][j2] = temp;
 }
 
-//takes list and copies it into diagonal of matrix 
-void setDiag(int** mat, int i, int j, int m, int n, int* list){
-    int k = 0;
-    while (i < m & j < n) {
-        mat[i][j] = list[k];
-        i++, j++; k++;
-    }
-}
 
 //sorts the diagonal starting i and j
-void dSort(int** mat, int i, int j, int m, int n)
+void diagQuickSort(int** mat, int i, int j, int length)
 {
-    int* list = diagToList(mat, i, j, m, n);
-    int length = minimum(m-i, n-j); 
-    mergeSort(list, length);
-    setDiag(mat, i, j, m, n, list);
-    free(list);
+    if (length < 2){
+        return;
+    }
+    int pivot = mat[i][j];
+    int a = 0; int b = length-1;
+
+    while (a < b) {
+        while(mat[i+a][j+a] <= pivot & a < b){
+            a++;
+        }
+        while(mat[i+b][j+b] > pivot & a < b){
+            b--;
+        }
+        Switch(mat, i+a, j+a, i+b, j+b);
+    }
+    Switch(mat, i, j, i+a, j+a);
+    diagQuickSort(mat, i, j, a); 
+    diagQuickSort(mat, i+a+1, j+a+1, length-b);
 }
+
+
+
 
 //create a copy of mat were all the elements on it's diagonal are sorted
 int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int** returnColumnSizes){
@@ -131,11 +86,13 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
     for (int d = 0; d < m + n -1; d++){
         //if diag starts in first column
         if (d < m){
-            dSort(mat, d, 0, m, n);
+            int length = minimum(m-d, n);
+            diagQuickSort(mat, d, 0, length);
         }
         //if diag starts in first line AND not in first column
         else {
-            dSort(mat, 0, d-m+1, m, n);
+            int length = minimum(m, n-(d-m+1));
+            diagQuickSort(mat, 0, d-m+1, length);
         }
     }
     return mat;

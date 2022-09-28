@@ -15,6 +15,7 @@ void printList(int* list, int length){
     for (int i = 0; i < length; i++) {
         printf("%d ", list[i]);
     }
+    printf("\n");
 }
 
 //function sorts two ordered lists
@@ -22,8 +23,10 @@ void merge(int* list1, int len1, int* list2, int len2){
     int i, j, k, temp; i = j = k = temp = 0;
     //create temporary copies of list1 and list2
     int *tempL1; int *tempL2;
-    tempL1 = (int *) malloc(len1); tempL2 = (int *) malloc(len2);
-    copyLists(list1, tempL1, len1); copyLists(list2, tempL2, len2);
+    tempL1 = (int*) malloc(sizeof(int)*len1); 
+    tempL2 = (int*) malloc(sizeof(int)*len2);
+    copyLists(list1, tempL1, len1); 
+    copyLists(list2, tempL2, len2);
     while(i < len1 & j < len2){
         if (tempL1[i] <= tempL2[j]) {
             list1[k] = tempL1[i]; i++;
@@ -52,9 +55,9 @@ void mergeSort(int *list, int length){
 
 int main(){
     //example test
-    int list[3] = {3,7,2};
-    mergeSort(list, 3);
-    printList(list, 3);
+    int list[15] = {3,7,2,4,5,6,7,4,5,6,5,7,4,2,3};
+    mergeSort(list, 15);
+    printList(list, 15);
     return 0;
 }
 

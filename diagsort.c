@@ -102,7 +102,7 @@ int* diagToList(int** mat, int i, int j, int m, int n){
     //find length of list
     int length = minimum(m-i, n-j); 
     //create list
-    int* list = (int *) malloc(length); //allocate memory for list
+    int* list = (int*)malloc(length); //allocate memory for list
     int k = 0;
     while (i < m & j < n) {
         list[k] = mat[i][j];
@@ -121,12 +121,12 @@ void setDiag(int** mat, int i, int j, int m, int n, int* list){
 }
 
 //sorts the diagonal starting i and j
-void dSort(int** iMat, int** rMat, int i, int j, int m, int n)
+void dSort(int** mat, int i, int j, int m, int n)
 {
-    int* list = diagToList(iMat, i, j, m, n);
+    int* list = diagToList(mat, i, j, m, n);
     int length = minimum(m-i, n-j); 
     mergeSort(list, length);
-    setDiag(rMat, i, j, m, n, list);
+    setDiag(mat, i, j, m, n, list);
     free(list);
 }
 
@@ -136,29 +136,23 @@ int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int
     //rename variables
     int m = matSize; //number of lines
     int n =  matColSize[0]; //number of columns
-
-    //set (or return) the return sizes of the matrix returned
-    //same size for every column
-    returnSize = &matSize;
+    //set sizes of returned matrix
+    *returnSize = m;
     int *cSizes= (int *)malloc(m);
     for (int i = 0; i < m; i++){ cSizes[i] = n;}
     *returnColumnSizes = cSizes;
-    
-
-    //create return matrix
-    int** rMat = matrix(m,n);
     //sort all the diagonals
     for (int d = 0; d < m + n -1; d++){
         //if diag starts in first column
         if (d < m){
-            dSort(mat, rMat, d, 0, m, n);
+            dSort(mat, d, 0, m, n);
         }
         //if diag starts in first line AND not in first column
         else {
-            dSort(mat, rMat, 0, d-m+1, m, n);
+            dSort(mat, 0, d-m+1, m, n);
         }
     }
-    return rMat;
+    return mat;
 }
 
 /*-----------------------------------------Main---------------------------------------- */
@@ -173,9 +167,11 @@ int main(){
     printf("\n");
     int matSize = 2;
     int matColSize[2] = {3,3};
-    int* returnSize; int** returnColumnSizes;
+    int rSize;
+    int* returnSize = &rSize; int** returnColumnSizes;
     int** sortedMat = diagonalSort(mat, matSize, matColSize, returnSize, returnColumnSizes);
-    printMatrix(sortedMat, 2, 3);
-    
+    printMatrix(mat, 2, 3);
+    printList(*returnColumnSizes, 2);
+    printf("%d", *returnSize);
     return 0;
 }
